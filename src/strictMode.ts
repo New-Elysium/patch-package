@@ -53,6 +53,11 @@ export function createStrictBaseline({
   return {
     async getOriginalTarballFiles() {
       // CASE 1: file:./path -> walk local directory and return relative paths
+      if (process.env.PATCH_PACKAGE_DEBUG) {
+        process.stderr.write(
+          `[strict] resolving ${packageName} resolution=${JSON.stringify(resolution)}\n`,
+        )
+      }
       if (resolution.startsWith("file:")) {
         const localPath = resolvePath(appPath, resolution.slice("file:".length))
         if (!existsSync(localPath)) return null
@@ -93,11 +98,37 @@ export function createStrictBaseline({
       const version = aliasResolved.version ?? resolution
       if (!version.match(/^v?\d/)) return null
       try {
+        if (process.env.PATCH_PACKAGE_DEBUG) {
+          process.stderr.write(
+            `[strict] case 4: name=${name} version=${version}\n`,
+          )
+        }
         const tarballUrl = await fetchTarballUrlFromRegistry(name, version)
-        if (!tarballUrl) return null
+        if (!tarballUrl) {
+          if (process.env.PATCH_PACKAGE_DEBUG) {
+            process.stderr.write(
+              `[strict] registry lookup returned no tarball URL\n`,
+            )
+          }
+          return null
+        }
+        if (process.env.PATCH_PACKAGE_DEBUG) {
+          process.stderr.write(`[strict] downloading ${tarballUrl}\n`)
+        }
         const tarball = await fetchBuffer(tarballUrl)
-        return new Set(listTarGzEntries(tarball))
-      } catch {
+        const entries = listTarGzEntries(tarball)
+        if (process.env.PATCH_PACKAGE_DEBUG) {
+          process.stderr.write(
+            `[strict] parsed ${entries.length} entries from tarball\n`,
+          )
+        }
+        return new Set(entries)
+      } catch (e) {
+        if (process.env.PATCH_PACKAGE_DEBUG) {
+          process.stderr.write(
+            `[strict] case 4 threw: ${(e as Error).message}\n`,
+          )
+        }
         return null
       }
     },
