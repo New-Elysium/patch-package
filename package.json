@@ -1,6 +1,6 @@
 {
   "name": "@psync/patch-package",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Fix broken node modules with no fuss",
   "main": "dist/index.js",
   "repository": "github:New-Elysium/patch-package",
