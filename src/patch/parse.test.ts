@@ -9,7 +9,7 @@ index 2de83dd..842652c 100644
 @@ -1,5 +1,5 @@
  this
  is
- 
+
 -a
 +
  file
@@ -21,7 +21,7 @@ index 2de83dd..842652c 100644
 @@ -1,5 +1,4 @@
  this
  is
- 
+
 -a
 +
  file
@@ -34,7 +34,7 @@ index 2de83dd..842652c 100644
 @@ -1,4 +1,5 @@
  this
  is
- 
+
 -a
 +
  file
@@ -47,7 +47,7 @@ index 2de83dd..842652c 100644
 @@ -1,0 +1,5 @@
  this
  is
- 
+
 -a
 +
  file
@@ -59,7 +59,7 @@ index 2de83dd..842652c 100644
 @@ -1,5 +1,0 @@
  this
  is
- 
+
 -a
 +
  file
@@ -72,7 +72,7 @@ index 2de83dd..842652c 100644
 @@ -1,5 +1,5@@
  this
  is
- 
+
 -a
 +
  file
@@ -112,9 +112,9 @@ index fbf1785..92d2c5f
 @@ -1,4 +1,4 @@
 -one
 +ne
- 
+
  two
- 
+
 `
 
 const oldStylePatch = `patch-package
@@ -178,7 +178,7 @@ describe("the patch parser", () => {
     expect(parsePatchFile(modeChangeAndModifyAndRename)).toMatchSnapshot()
   })
 
-  it.only("parses old-style patches", () => {
+  it("parses old-style patches", () => {
     expect(parsePatchFile(oldStylePatch)).toMatchSnapshot()
   })
 })

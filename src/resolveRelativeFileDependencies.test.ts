@@ -1,4 +1,5 @@
 import { resolveRelativeFileDependencies } from "./resolveRelativeFileDependencies"
+import { resolve } from "./path"
 
 describe("resolveRelativeFileDependencies", () => {
   it("works for package.json", () => {
@@ -13,7 +14,9 @@ describe("resolveRelativeFileDependencies", () => {
 
     const expected = {
       absolute: "file:/not-foo/bar",
-      relative: "file:/foo/baz",
+      // On Windows, resolve("/foo/bar", "../baz") returns "<drive>:/foo/baz".
+      // On posix, it returns "/foo/baz". Compute platform-aware.
+      relative: "file:" + resolve(appRootPath, "../baz"),
       remote: "git+https://blah.com/blah.git",
       version: "^434.34.34",
     }

@@ -26,13 +26,13 @@ describe(packageIsDevDependency, () => {
     ).toBe(false)
   })
   it("returns false if package is a transitive dependency of a dev dependency", () => {
-    expect(existsSync(join(appPath, "node_modules/cosmiconfig"))).toBe(true)
+    expect(existsSync(join(appPath, "node_modules/exit-x"))).toBe(true)
     expect(
       packageIsDevDependency({
         appPath,
         patchDetails: getPackageDetailsFromPatchFilename(
-          // cosmiconfig is a transitive dep of lint-staged
-          "cosmiconfig+3.0.1.patch",
+          // exit-x is a transitive dep of jest (a devDep), not a prod dep
+          "exit-x+1.0.0.patch",
         )!,
       }),
     ).toBe(false)

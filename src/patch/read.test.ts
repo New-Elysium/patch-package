@@ -35,24 +35,26 @@ describe(readPatch, () => {
     })
 
     expect(removeAnsiCodes(lastLog())).toMatchInlineSnapshot(`
-"
-**ERROR** Failed to apply patch for package test
-    
-  This happened because the patch file patches/test+1.2.3.patch could not be parsed.
-   
-  If you just upgraded patch-package, you can try running:
-  
-    patch -p1 -i patches/test+1.2.3.patch
-    npx patch-package test
-    
-  Otherwise, try manually creating the patch file again.
-  
-  If the problem persists, please submit a bug report:
-  
-    https://github.com/ds300/patch-package/issues/new?title=Patch+file+parse+error&body=%3CPlease+attach+the+patch+file+in+question%3E
+     "
+     **ERROR** Failed to apply patch for package test
+         
+       This happened because the patch file patches\\test+1.2.3.patch could not be parsed.
+        
+       If you just upgraded patch-package, you can try running:
+       
+         cd patches\\test+1.2.3.patc
+         patch -p1 -i h
+         npx patch-package test
+         cd ../..
+         
+       Otherwise, try manually creating the patch file again.
+       
+       If the problem persists, please submit a bug report:
+       
+         https://github.com/ds300/patch-package/issues/new?title=Patch+file+parse+error&body=%3CPlease+attach+the+patch+file+in+question%3E
 
-"
-`)
+     "
+    `)
   })
 
   it("throws an error for scoped packages", () => {
@@ -65,24 +67,26 @@ describe(readPatch, () => {
     })
 
     expect(removeAnsiCodes(lastLog())).toMatchInlineSnapshot(`
-"
-**ERROR** Failed to apply patch for package @david/test
-    
-  This happened because the patch file patches/@david+test+1.2.3.patch could not be parsed.
-   
-  If you just upgraded patch-package, you can try running:
-  
-    patch -p1 -i patches/@david+test+1.2.3.patch
-    npx patch-package @david/test
-    
-  Otherwise, try manually creating the patch file again.
-  
-  If the problem persists, please submit a bug report:
-  
-    https://github.com/ds300/patch-package/issues/new?title=Patch+file+parse+error&body=%3CPlease+attach+the+patch+file+in+question%3E
+     "
+     **ERROR** Failed to apply patch for package @david/test
+         
+       This happened because the patch file patches\\@david+test+1.2.3.patch could not be parsed.
+        
+       If you just upgraded patch-package, you can try running:
+       
+         cd patches\\@david+test+1.2.3.patc
+         patch -p1 -i h
+         npx patch-package @david/test
+         cd ../..
+         
+       Otherwise, try manually creating the patch file again.
+       
+       If the problem persists, please submit a bug report:
+       
+         https://github.com/ds300/patch-package/issues/new?title=Patch+file+parse+error&body=%3CPlease+attach+the+patch+file+in+question%3E
 
-"
-`)
+     "
+    `)
   })
 
   it("throws an error for nested packages", () => {
@@ -94,24 +98,26 @@ describe(readPatch, () => {
     })
 
     expect(removeAnsiCodes(lastLog())).toMatchInlineSnapshot(`
-"
-**ERROR** Failed to apply patch for package @david/test => react-native
-    
-  This happened because the patch file patches/@david+test++react-native+1.2.3.patch could not be parsed.
-   
-  If you just upgraded patch-package, you can try running:
-  
-    patch -p1 -i patches/@david+test++react-native+1.2.3.patch
-    npx patch-package @david/test/react-native
-    
-  Otherwise, try manually creating the patch file again.
-  
-  If the problem persists, please submit a bug report:
-  
-    https://github.com/ds300/patch-package/issues/new?title=Patch+file+parse+error&body=%3CPlease+attach+the+patch+file+in+question%3E
+     "
+     **ERROR** Failed to apply patch for package @david/test => react-native
+         
+       This happened because the patch file patches\\@david+test++react-native+1.2.3.patch could not be parsed.
+        
+       If you just upgraded patch-package, you can try running:
+       
+         cd patches\\@david+test++react-native+1.2.3.patc
+         patch -p1 -i h
+         npx patch-package @david/test/react-native
+         cd ../..
+         
+       Otherwise, try manually creating the patch file again.
+       
+       If the problem persists, please submit a bug report:
+       
+         https://github.com/ds300/patch-package/issues/new?title=Patch+file+parse+error&body=%3CPlease+attach+the+patch+file+in+question%3E
 
-"
-`)
+     "
+    `)
   })
 
   it("throws an error for with custom patch dir", () => {
@@ -123,24 +129,26 @@ describe(readPatch, () => {
     })
 
     expect(removeAnsiCodes(lastLog())).toMatchInlineSnapshot(`
-"
-**ERROR** Failed to apply patch for package @david/test => react-native
-    
-  This happened because the patch file .cruft/patches/@david+test++react-native+1.2.3.patch could not be parsed.
-   
-  If you just upgraded patch-package, you can try running:
-  
-    patch -p1 -i .cruft/patches/@david+test++react-native+1.2.3.patch
-    npx patch-package @david/test/react-native
-    
-  Otherwise, try manually creating the patch file again.
-  
-  If the problem persists, please submit a bug report:
-  
-    https://github.com/ds300/patch-package/issues/new?title=Patch+file+parse+error&body=%3CPlease+attach+the+patch+file+in+question%3E
+     "
+     **ERROR** Failed to apply patch for package @david/test => react-native
+         
+       This happened because the patch file .cruft\\patches\\@david+test++react-native+1.2.3.patch could not be parsed.
+        
+       If you just upgraded patch-package, you can try running:
+       
+         cd .cruft\\patches\\@david+test++react-native+1.2.3.patc
+         patch -p1 -i h
+         npx patch-package @david/test/react-native
+         cd ../../..
+         
+       Otherwise, try manually creating the patch file again.
+       
+       If the problem persists, please submit a bug report:
+       
+         https://github.com/ds300/patch-package/issues/new?title=Patch+file+parse+error&body=%3CPlease+attach+the+patch+file+in+question%3E
 
-"
-`)
+     "
+    `)
   })
 
   it("throws an error with cd instruction for unhoisted packages", () => {
@@ -154,26 +162,26 @@ describe(readPatch, () => {
     expect(process.cwd).toHaveBeenCalled()
 
     expect(removeAnsiCodes(lastLog())).toMatchInlineSnapshot(`
-"
-**ERROR** Failed to apply patch for package @david/test => react-native
-    
-  This happened because the patch file packages/banana/patches/@david+test++react-native+1.2.3.patch could not be parsed.
-   
-  If you just upgraded patch-package, you can try running:
-  
-    cd packages/banana/
-    patch -p1 -i patches/@david+test++react-native+1.2.3.patch
-    npx patch-package @david/test/react-native
-    cd ../..
-    
-  Otherwise, try manually creating the patch file again.
-  
-  If the problem persists, please submit a bug report:
-  
-    https://github.com/ds300/patch-package/issues/new?title=Patch+file+parse+error&body=%3CPlease+attach+the+patch+file+in+question%3E
+     "
+     **ERROR** Failed to apply patch for package @david/test => react-native
+         
+       This happened because the patch file packages\\banana\\patches\\@david+test++react-native+1.2.3.patch could not be parsed.
+        
+       If you just upgraded patch-package, you can try running:
+       
+         cd packages\\banana\\patches\\@david+test++react-native+1.2.3.patc
+         patch -p1 -i h
+         npx patch-package @david/test/react-native
+         cd ../../../..
+         
+       Otherwise, try manually creating the patch file again.
+       
+       If the problem persists, please submit a bug report:
+       
+         https://github.com/ds300/patch-package/issues/new?title=Patch+file+parse+error&body=%3CPlease+attach+the+patch+file+in+question%3E
 
-"
-`)
+     "
+    `)
   })
 
   it("throws an error with cd instruction for unhoisted packages and custom patchDir", () => {
@@ -187,25 +195,25 @@ describe(readPatch, () => {
     expect(process.cwd).toHaveBeenCalled()
 
     expect(removeAnsiCodes(lastLog())).toMatchInlineSnapshot(`
-"
-**ERROR** Failed to apply patch for package @david/test => react-native
-    
-  This happened because the patch file packages/banana/.patches/@david+test++react-native+1.2.3.patch could not be parsed.
-   
-  If you just upgraded patch-package, you can try running:
-  
-    cd packages/banana/
-    patch -p1 -i .patches/@david+test++react-native+1.2.3.patch
-    npx patch-package @david/test/react-native
-    cd ../..
-    
-  Otherwise, try manually creating the patch file again.
-  
-  If the problem persists, please submit a bug report:
-  
-    https://github.com/ds300/patch-package/issues/new?title=Patch+file+parse+error&body=%3CPlease+attach+the+patch+file+in+question%3E
+     "
+     **ERROR** Failed to apply patch for package @david/test => react-native
+         
+       This happened because the patch file packages\\banana\\.patches\\@david+test++react-native+1.2.3.patch could not be parsed.
+        
+       If you just upgraded patch-package, you can try running:
+       
+         cd packages\\banana\\.patches\\@david+test++react-native+1.2.3.patc
+         patch -p1 -i h
+         npx patch-package @david/test/react-native
+         cd ../../../..
+         
+       Otherwise, try manually creating the patch file again.
+       
+       If the problem persists, please submit a bug report:
+       
+         https://github.com/ds300/patch-package/issues/new?title=Patch+file+parse+error&body=%3CPlease+attach+the+patch+file+in+question%3E
 
-"
-`)
+     "
+    `)
   })
 })

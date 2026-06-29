@@ -1,23 +1,23 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`the patch parser can handle files with CRLF line breaks 1`] = `
-Array [
-  Object {
+[
+  {
     "hash": "3e1267f",
-    "hunk": Object {
-      "header": Object {
-        "original": Object {
+    "hunk": {
+      "header": {
+        "original": {
           "length": 0,
           "start": 1,
         },
-        "patched": Object {
+        "patched": {
           "length": 1,
           "start": 1,
         },
       },
-      "parts": Array [
-        Object {
-          "lines": Array [
+      "parts": [
+        {
+          "lines": [
             "this is a new file
 ",
           ],
@@ -25,6 +25,9 @@ Array [
           "type": "insertion",
         },
       ],
+      "source": "@@ -0,0 +1 @@
++this is a new file
+",
     },
     "mode": 420,
     "path": "banana.ts",
@@ -34,25 +37,25 @@ Array [
 `;
 
 exports[`the patch parser parses old-style patches 1`] = `
-Array [
-  Object {
+[
+  {
     "afterHash": null,
     "beforeHash": null,
-    "hunks": Array [
-      Object {
-        "header": Object {
-          "original": Object {
+    "hunks": [
+      {
+        "header": {
+          "original": {
             "length": 10,
             "start": 41,
           },
-          "patched": Object {
+          "patched": {
             "length": 11,
             "start": 41,
           },
         },
-        "parts": Array [
-          Object {
-            "lines": Array [
+        "parts": [
+          {
+            "lines": [
               " */",
               "function isValidNameError(name, node) {",
               "  !(typeof name === 'string') ? (0, _invariant2.default)(0, 'Expected string') : void 0;",
@@ -60,42 +63,42 @@ Array [
             "noNewlineAtEndOfFile": false,
             "type": "context",
           },
-          Object {
-            "lines": Array [
+          {
+            "lines": [
               "  if (name.length > 1 && name[0] === '_' && name[1] === '_') {",
-              "    return new _GraphQLError.GraphQLError('Name \\"' + name + '\\" must not begin with \\"__\\", which is reserved by ' + 'GraphQL introspection.', node);",
+              "    return new _GraphQLError.GraphQLError('Name "' + name + '" must not begin with "__", which is reserved by ' + 'GraphQL introspection.', node);",
               "  }",
             ],
             "noNewlineAtEndOfFile": false,
             "type": "deletion",
           },
-          Object {
-            "lines": Array [
+          {
+            "lines": [
               "  // if (name.length > 1 && name[0] === '_' && name[1] === '_') {",
-              "  //   return new _GraphQLError.GraphQLError('Name \\"' + name + '\\" must not begin with \\"__\\", which is reserved by ' + 'GraphQL introspection.', node);",
+              "  //   return new _GraphQLError.GraphQLError('Name "' + name + '" must not begin with "__", which is reserved by ' + 'GraphQL introspection.', node);",
               "  // }",
             ],
             "noNewlineAtEndOfFile": false,
             "type": "insertion",
           },
-          Object {
-            "lines": Array [
+          {
+            "lines": [
               "  if (!NAME_RX.test(name)) {",
-              "    return new _GraphQLError.GraphQLError('Names must match /^[_a-zA-Z][_a-zA-Z0-9]*$/ but \\"' + name + '\\" does not.', node);",
+              "    return new _GraphQLError.GraphQLError('Names must match /^[_a-zA-Z][_a-zA-Z0-9]*$/ but "' + name + '" does not.', node);",
               "  }",
             ],
             "noNewlineAtEndOfFile": false,
             "type": "context",
           },
-          Object {
-            "lines": Array [
+          {
+            "lines": [
               "",
             ],
             "noNewlineAtEndOfFile": false,
             "type": "insertion",
           },
-          Object {
-            "lines": Array [
+          {
+            "lines": [
               "}",
             ],
             "noNewlineAtEndOfFile": true,
@@ -107,40 +110,40 @@ Array [
  function isValidNameError(name, node) {
    !(typeof name === 'string') ? (0, _invariant2.default)(0, 'Expected string') : void 0;
 -  if (name.length > 1 && name[0] === '_' && name[1] === '_') {
--    return new _GraphQLError.GraphQLError('Name \\"' + name + '\\" must not begin with \\"__\\", which is reserved by ' + 'GraphQL introspection.', node);
+-    return new _GraphQLError.GraphQLError('Name "' + name + '" must not begin with "__", which is reserved by ' + 'GraphQL introspection.', node);
 -  }
 +  // if (name.length > 1 && name[0] === '_' && name[1] === '_') {
-+  //   return new _GraphQLError.GraphQLError('Name \\"' + name + '\\" must not begin with \\"__\\", which is reserved by ' + 'GraphQL introspection.', node);
++  //   return new _GraphQLError.GraphQLError('Name "' + name + '" must not begin with "__", which is reserved by ' + 'GraphQL introspection.', node);
 +  // }
    if (!NAME_RX.test(name)) {
-     return new _GraphQLError.GraphQLError('Names must match /^[_a-zA-Z][_a-zA-Z0-9]*$/ but \\"' + name + '\\" does not.', node);
+     return new _GraphQLError.GraphQLError('Names must match /^[_a-zA-Z][_a-zA-Z0-9]*$/ but "' + name + '" does not.', node);
    }
 +
  }
-\\\\ No newline at end of file",
+\\ No newline at end of file",
       },
     ],
     "path": "node_modules/graphql/utilities/assertValidName.js",
     "type": "patch",
   },
-  Object {
+  {
     "afterHash": null,
     "beforeHash": null,
-    "hunks": Array [
-      Object {
-        "header": Object {
-          "original": Object {
+    "hunks": [
+      {
+        "header": {
+          "original": {
             "length": 9,
             "start": 29,
           },
-          "patched": Object {
+          "patched": {
             "length": 9,
             "start": 29,
           },
         },
-        "parts": Array [
-          Object {
-            "lines": Array [
+        "parts": [
+          {
+            "lines": [
               " */",
               "export function isValidNameError(name, node) {",
               "  !(typeof name === 'string') ? invariant(0, 'Expected string') : void 0;",
@@ -148,28 +151,28 @@ Array [
             "noNewlineAtEndOfFile": false,
             "type": "context",
           },
-          Object {
-            "lines": Array [
+          {
+            "lines": [
               "  if (name.length > 1 && name[0] === '_' && name[1] === '_') {",
-              "    return new GraphQLError('Name \\"' + name + '\\" must not begin with \\"__\\", which is reserved by ' + 'GraphQL introspection.', node);",
+              "    return new GraphQLError('Name "' + name + '" must not begin with "__", which is reserved by ' + 'GraphQL introspection.', node);",
               "  }",
             ],
             "noNewlineAtEndOfFile": false,
             "type": "deletion",
           },
-          Object {
-            "lines": Array [
+          {
+            "lines": [
               "  // if (name.length > 1 && name[0] === '_' && name[1] === '_') {",
-              "  //   return new GraphQLError('Name \\"' + name + '\\" must not begin with \\"__\\", which is reserved by ' + 'GraphQL introspection.', node);",
+              "  //   return new GraphQLError('Name "' + name + '" must not begin with "__", which is reserved by ' + 'GraphQL introspection.', node);",
               "  // }",
             ],
             "noNewlineAtEndOfFile": false,
             "type": "insertion",
           },
-          Object {
-            "lines": Array [
+          {
+            "lines": [
               "  if (!NAME_RX.test(name)) {",
-              "    return new GraphQLError('Names must match /^[_a-zA-Z][_a-zA-Z0-9]*$/ but \\"' + name + '\\" does not.', node);",
+              "    return new GraphQLError('Names must match /^[_a-zA-Z][_a-zA-Z0-9]*$/ but "' + name + '" does not.', node);",
               "  }",
             ],
             "noNewlineAtEndOfFile": false,
@@ -181,13 +184,13 @@ Array [
  export function isValidNameError(name, node) {
    !(typeof name === 'string') ? invariant(0, 'Expected string') : void 0;
 -  if (name.length > 1 && name[0] === '_' && name[1] === '_') {
--    return new GraphQLError('Name \\"' + name + '\\" must not begin with \\"__\\", which is reserved by ' + 'GraphQL introspection.', node);
+-    return new GraphQLError('Name "' + name + '" must not begin with "__", which is reserved by ' + 'GraphQL introspection.', node);
 -  }
 +  // if (name.length > 1 && name[0] === '_' && name[1] === '_') {
-+  //   return new GraphQLError('Name \\"' + name + '\\" must not begin with \\"__\\", which is reserved by ' + 'GraphQL introspection.', node);
++  //   return new GraphQLError('Name "' + name + '" must not begin with "__", which is reserved by ' + 'GraphQL introspection.', node);
 +  // }
    if (!NAME_RX.test(name)) {
-     return new GraphQLError('Names must match /^[_a-zA-Z][_a-zA-Z0-9]*$/ but \\"' + name + '\\" does not.', node);
+     return new GraphQLError('Names must match /^[_a-zA-Z][_a-zA-Z0-9]*$/ but "' + name + '" does not.', node);
    }",
       },
     ],
@@ -198,50 +201,50 @@ Array [
 `;
 
 exports[`the patch parser works 1`] = `
-Array [
-  Object {
+[
+  {
     "fromPath": "numbers.txt",
     "toPath": "banana.txt",
     "type": "rename",
   },
-  Object {
+  {
     "newMode": 493,
     "oldMode": 420,
     "path": "banana.txt",
     "type": "mode change",
   },
-  Object {
+  {
     "afterHash": "92d2c5f",
     "beforeHash": "fbf1785",
-    "hunks": Array [
-      Object {
-        "header": Object {
-          "original": Object {
+    "hunks": [
+      {
+        "header": {
+          "original": {
             "length": 4,
             "start": 1,
           },
-          "patched": Object {
+          "patched": {
             "length": 4,
             "start": 1,
           },
         },
-        "parts": Array [
-          Object {
-            "lines": Array [
+        "parts": [
+          {
+            "lines": [
               "one",
             ],
             "noNewlineAtEndOfFile": false,
             "type": "deletion",
           },
-          Object {
-            "lines": Array [
+          {
+            "lines": [
               "ne",
             ],
             "noNewlineAtEndOfFile": false,
             "type": "insertion",
           },
-          Object {
-            "lines": Array [
+          {
+            "lines": [
               "",
               "two",
               "",
@@ -250,6 +253,12 @@ Array [
             "type": "context",
           },
         ],
+        "source": "@@ -1,4 +1,4 @@
+-one
++ne
+
+ two
+",
       },
     ],
     "path": "banana.txt",
@@ -259,25 +268,25 @@ Array [
 `;
 
 exports[`the patch parser works 2`] = `
-Array [
-  Object {
+[
+  {
     "afterHash": "842652c",
     "beforeHash": "2de83dd",
-    "hunks": Array [
-      Object {
-        "header": Object {
-          "original": Object {
+    "hunks": [
+      {
+        "header": {
+          "original": {
             "length": 5,
             "start": 1,
           },
-          "patched": Object {
+          "patched": {
             "length": 5,
             "start": 1,
           },
         },
-        "parts": Array [
-          Object {
-            "lines": Array [
+        "parts": [
+          {
+            "lines": [
               "this",
               "is",
               "",
@@ -285,28 +294,35 @@ Array [
             "noNewlineAtEndOfFile": false,
             "type": "context",
           },
-          Object {
-            "lines": Array [
+          {
+            "lines": [
               "a",
             ],
             "noNewlineAtEndOfFile": false,
             "type": "deletion",
           },
-          Object {
-            "lines": Array [
+          {
+            "lines": [
               "",
             ],
             "noNewlineAtEndOfFile": false,
             "type": "insertion",
           },
-          Object {
-            "lines": Array [
+          {
+            "lines": [
               "file",
             ],
             "noNewlineAtEndOfFile": false,
             "type": "context",
           },
         ],
+        "source": "@@ -1,5 +1,5 @@
+ this
+ is
+
+-a
++
+ file",
       },
     ],
     "path": "banana.ts",
@@ -316,50 +332,50 @@ Array [
 `;
 
 exports[`the patch parser works 3`] = `
-Array [
-  Object {
+[
+  {
     "fromPath": "numbers.txt",
     "toPath": "banana.txt",
     "type": "rename",
   },
-  Object {
+  {
     "newMode": 493,
     "oldMode": 420,
     "path": "banana.txt",
     "type": "mode change",
   },
-  Object {
+  {
     "afterHash": "92d2c5f",
     "beforeHash": "fbf1785",
-    "hunks": Array [
-      Object {
-        "header": Object {
-          "original": Object {
+    "hunks": [
+      {
+        "header": {
+          "original": {
             "length": 4,
             "start": 1,
           },
-          "patched": Object {
+          "patched": {
             "length": 4,
             "start": 1,
           },
         },
-        "parts": Array [
-          Object {
-            "lines": Array [
+        "parts": [
+          {
+            "lines": [
               "one",
             ],
             "noNewlineAtEndOfFile": false,
             "type": "deletion",
           },
-          Object {
-            "lines": Array [
+          {
+            "lines": [
               "ne",
             ],
             "noNewlineAtEndOfFile": false,
             "type": "insertion",
           },
-          Object {
-            "lines": Array [
+          {
+            "lines": [
               "",
               "two",
               "",
@@ -368,6 +384,12 @@ Array [
             "type": "context",
           },
         ],
+        "source": "@@ -1,4 +1,4 @@
+-one
++ne
+
+ two
+",
       },
     ],
     "path": "banana.txt",
@@ -377,25 +399,25 @@ Array [
 `;
 
 exports[`the patch parser works for a simple case 1`] = `
-Array [
-  Object {
+[
+  {
     "afterHash": "842652c",
     "beforeHash": "2de83dd",
-    "hunks": Array [
-      Object {
-        "header": Object {
-          "original": Object {
+    "hunks": [
+      {
+        "header": {
+          "original": {
             "length": 5,
             "start": 1,
           },
-          "patched": Object {
+          "patched": {
             "length": 5,
             "start": 1,
           },
         },
-        "parts": Array [
-          Object {
-            "lines": Array [
+        "parts": [
+          {
+            "lines": [
               "this",
               "is",
               "",
@@ -403,28 +425,35 @@ Array [
             "noNewlineAtEndOfFile": false,
             "type": "context",
           },
-          Object {
-            "lines": Array [
+          {
+            "lines": [
               "a",
             ],
             "noNewlineAtEndOfFile": false,
             "type": "deletion",
           },
-          Object {
-            "lines": Array [
+          {
+            "lines": [
               "",
             ],
             "noNewlineAtEndOfFile": false,
             "type": "insertion",
           },
-          Object {
-            "lines": Array [
+          {
+            "lines": [
               "file",
             ],
             "noNewlineAtEndOfFile": false,
             "type": "context",
           },
         ],
+        "source": "@@ -1,5 +1,5 @@
+ this
+ is
+
+-a
++
+ file",
       },
     ],
     "path": "banana.ts",
