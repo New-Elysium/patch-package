@@ -26,6 +26,7 @@ const argv = minimist(process.argv.slice(2), {
     "error-on-warn",
     "create-issue",
     "partial",
+    "strict",
     "",
   ],
   string: ["patch-dir", "append", "rebase"],
@@ -88,21 +89,26 @@ if (argv.version || argv.v) {
       argv["use-yarn"] ? "yarn" : argv["use-bun"] ? "bun" : null,
     )
     const createIssue = argv["create-issue"]
-    packageNames.forEach((packagePathSpecifier: string) => {
-      makePatch({
-        packagePathSpecifier,
-        appPath,
-        packageManager,
-        includePaths,
-        excludePaths,
-        patchDir,
-        createIssue,
-        mode:
-          "append" in argv
-            ? { type: "append", name: argv.append || undefined }
-            : { type: "overwrite_last" },
-      })
-    })
+    // Run sequentially so multiple packages produce deterministic output
+    // (parallel async makes `process.exit(1)` exits during error paths racy).
+    ;(async () => {
+      for (const packagePathSpecifier of packageNames) {
+        await makePatch({
+          packagePathSpecifier,
+          appPath,
+          packageManager,
+          includePaths,
+          excludePaths,
+          patchDir,
+          createIssue,
+          mode:
+            "append" in argv
+              ? { type: "append", name: argv.append || undefined }
+              : { type: "overwrite_last" },
+          strict: !!argv.strict,
+        })
+      }
+    })()
   } else {
     console.log("Applying patches...")
     const reverse = !!argv["reverse"]
@@ -215,6 +221,16 @@ Usage:
         Paths are relative to the root dir of the package to be patched.
 
         Default: 'package\\.json$'
+
+    ${chalk.bold("--strict")}
+
+        Only include files that were part of the original published package
+        in the resulting patch. New files that appeared in your node_modules
+        but were not in the upstream tarball are excluded. This prevents
+        '--- /dev/null' ("new file") entries caused by install-time file
+        drift. Requires network access to fetch the original tarball (or
+        a file:// resolution in the lockfile). Falls back to a warning if
+        the baseline cannot be determined.
 
     ${chalk.bold("--include <regexp>")}
 

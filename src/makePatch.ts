@@ -22,6 +22,7 @@ import {
 import { PackageManager } from "./detectPackageManager"
 import { removeIgnoredFiles } from "./filterFiles"
 import { getPackageResolution } from "./getPackageResolution"
+import { createStrictBaseline, pruneToBaseline } from "./strictMode"
 import { getPackageVersion } from "./getPackageVersion"
 import { hashFile } from "./hash"
 import {
@@ -54,7 +55,7 @@ function printNoPackageFoundError(
   )
 }
 
-export function makePatch({
+export async function makePatch({
   packagePathSpecifier,
   appPath,
   packageManager,
@@ -63,6 +64,7 @@ export function makePatch({
   patchDir,
   createIssue,
   mode,
+  strict = false,
 }: {
   packagePathSpecifier: string
   appPath: string
@@ -72,6 +74,7 @@ export function makePatch({
   patchDir: string
   createIssue: boolean
   mode: { type: "overwrite_last" } | { type: "append"; name?: string }
+  strict?: boolean
 }) {
   const packageDetails = getPatchDetailsFromCliString(packagePathSpecifier)
 
@@ -169,15 +172,16 @@ export function makePatch({
 
     // make a blank package.json
     mkdirpSync(tmpRepoNpmRoot)
+    const packageResolution = getPackageResolution({
+      packageDetails,
+      packageManager,
+      appPath,
+    })
     writeFileSync(
       tmpRepoPackageJsonPath,
       JSON.stringify({
         dependencies: {
-          [packageDetails.name]: getPackageResolution({
-            packageDetails,
-            packageManager,
-            appPath,
-          }),
+          [packageDetails.name]: packageResolution,
         },
         resolutions: resolveRelativeFileDependencies(
           appPath,
@@ -321,6 +325,42 @@ export function makePatch({
 
     // also remove ignored files like before
     removeIgnoredFiles(tmpRepoPackagePath, includePaths, excludePaths)
+
+    // strict mode: prune any file in the user's copy that was not part of the
+    // original published tarball. This prevents `--- /dev/null` ("new file")
+    // entries caused by install-time file drift.
+    if (strict) {
+      try {
+        const baseline = await createStrictBaseline({
+          packageName: packageDetails.name,
+          resolution: packageResolution,
+          appPath,
+        }).getOriginalTarballFiles()
+        if (baseline) {
+          const { pruned } = pruneToBaseline(tmpRepoPackagePath, baseline)
+          if (pruned > 0) {
+            console.info(
+              chalk.grey("•"),
+              `Strict mode: pruned ${pruned} file${pruned === 1 ? "" : "s"} not present in the original tarball`,
+            )
+          }
+        } else {
+          console.log(
+            chalk.yellow(
+              `⚠️  --strict was requested but the original tarball baseline could not be determined. ` +
+                `Falling back to non-strict patch generation. ` +
+                `This often happens with file: resolutions or when the registry is unreachable.`,
+            ),
+          )
+        }
+      } catch (e) {
+        console.log(
+          chalk.yellow(
+            `⚠️  --strict failed: ${(e as Error).message}. Falling back to non-strict patch generation.`,
+          ),
+        )
+      }
+    }
 
     // stage all files
     git("add", "-f", packageDetails.path)
