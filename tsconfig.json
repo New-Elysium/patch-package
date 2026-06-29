@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es2015",
+    "target": "es2020",
     "module": "commonjs",
-    "lib": ["es2015", "es2016", "es2017"],
+    "lib": ["es2020"],
     "strict": true,
     "esModuleInterop": true,
     "outDir": "dist",
@@ -10,8 +10,16 @@
     "noUnusedParameters": true,
     "inlineSourceMap": true,
     "noEmitOnError": false,
-    "inlineSources": true
+    "inlineSources": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "types": ["jest", "node"],
   },
-  "include": ["typings/**/*.d.ts", "src/**/*.ts", "property-based-tests/**/*", "integration-tests/**/*"],
-  "compileOnSave": true
+  "include": [
+    "typings/**/*.d.ts",
+    "src/**/*.ts",
+    "property-based-tests/**/*",
+    "integration-tests/**/*",
+  ],
+  "compileOnSave": true,
 }

@@ -5,18 +5,22 @@ on:
 name: Test
 jobs:
   test:
-    name: ${{ matrix.os }} on node ${{ matrix.node }}
+    name: ${{ matrix.os }} on bun ${{ matrix.bun }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest]
-        node: [14, 16, 18]
+        os: [ubuntu-latest, windows-latest]
+        bun: ["1.3.14"]
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: ${{ matrix.node }}
-      - run: yarn install
+          bun-version: ${{ matrix.bun }}
+      - run: bun install
+      - run: bun run typecheck
+      - run: bun run build
       - run: git config --global user.email "patch-package@test.com"
       - run: git config --global user.name "patch-package"
-      - run: yarn run test
+      - run: bunx jest --testPathPattern="src/"
+      - run: bun run test

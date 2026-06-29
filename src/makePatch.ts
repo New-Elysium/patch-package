@@ -117,11 +117,11 @@ export function makePatch({
     ? mode.type === "append"
       ? existingPatches.slice(0, previouslyAppliedPatches!.length)
       : state!.patches[state!.patches.length - 1].didApply
-      ? existingPatches.slice(0, previouslyAppliedPatches!.length - 1)
-      : existingPatches.slice(0, previouslyAppliedPatches!.length)
+        ? existingPatches.slice(0, previouslyAppliedPatches!.length - 1)
+        : existingPatches.slice(0, previouslyAppliedPatches!.length)
     : mode.type === "append"
-    ? existingPatches
-    : existingPatches.slice(0, -1)
+      ? existingPatches
+      : existingPatches.slice(0, -1)
 
   if (createIssue && mode.type === "append") {
     console.log("--create-issue is not compatible with --append.")
@@ -222,6 +222,21 @@ export function makePatch({
             cwd: tmpRepoNpmRoot,
           },
         )
+      }
+    } else if (packageManager === "bun") {
+      console.info(
+        chalk.grey("•"),
+        `Installing ${packageDetails.name}@${packageVersion} with bun`,
+      )
+      try {
+        spawnSafeSync(`bun`, ["install"], {
+          cwd: tmpRepoNpmRoot,
+          logStdErrOnError: false,
+        })
+      } catch (e) {
+        spawnSafeSync(`bun`, ["install", "--no-save"], {
+          cwd: tmpRepoNpmRoot,
+        })
       }
     } else {
       console.info(
@@ -346,10 +361,10 @@ export function makePatch({
 
   Your changes involve creating symlinks. patch-package does not yet support
   symlinks.
-  
+
   ️Please use ${chalk.bold("--include")} and/or ${chalk.bold(
-          "--exclude",
-        )} to narrow the scope of your patch if
+    "--exclude",
+  )} to narrow the scope of your patch if
   this was unintentional.
 `)
       } else {
@@ -358,25 +373,28 @@ export function makePatch({
           outPath,
           gzipSync(
             JSON.stringify({
-              error: { message: e.message, stack: e.stack },
+              error: {
+                message: (e as Error).message,
+                stack: (e as Error).stack,
+              },
               patch: diffResult.stdout.toString(),
             }),
           ),
         )
         console.log(`
 ⛔️ ${chalk.red.bold("ERROR")}
-        
+
   patch-package was unable to read the patch-file made by git. This should not
   happen.
-  
+
   A diagnostic file was written to
-  
+
     ${outPath}
-  
+
   Please attach it to a github issue
-  
+
     https://github.com/ds300/patch-package/issues/new?title=New+patch+parse+failed&body=Please+attach+the+diagnostic+file+by+dragging+it+into+here+🙏
-  
+
   Note that this diagnostic file will contain code from the package you were
   attempting to patch.
 

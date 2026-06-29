@@ -7,6 +7,7 @@ import yaml from "yaml"
 import findWorkspaceRoot from "find-yarn-workspace-root"
 import { getPackageVersion } from "./getPackageVersion"
 import { coerceSemVer } from "./coerceSemVer"
+import { parseBunLockfile } from "./parseBunLockfile"
 
 export function getPackageResolution({
   packageDetails,
@@ -17,24 +18,32 @@ export function getPackageResolution({
   packageManager: PackageManager
   appPath: string
 }) {
-  if (packageManager === "yarn") {
-    let lockFilePath = "yarn.lock"
+  if (packageManager === "yarn" || packageManager === "bun") {
+    const isBun = packageManager === "bun"
+    const lockFileName = isBun ? "bun.lockb" : "yarn.lock"
+    let lockFilePath = lockFileName
     if (!existsSync(lockFilePath)) {
       const workspaceRoot = findWorkspaceRoot()
       if (!workspaceRoot) {
-        throw new Error("Can't find yarn.lock file")
+        throw new Error(`Can't find ${lockFileName} file`)
       }
-      lockFilePath = join(workspaceRoot, "yarn.lock")
+      lockFilePath = join(workspaceRoot, lockFilePath)
     }
     if (!existsSync(lockFilePath)) {
-      throw new Error("Can't find yarn.lock file")
+      throw new Error(`Can't find ${lockFileName} file`)
     }
-    const lockFileString = readFileSync(lockFilePath).toString()
+    const lockFileString = isBun
+      ? parseBunLockfile(lockFilePath)
+      : readFileSync(lockFilePath).toString()
     let appLockFile
     if (lockFileString.includes("yarn lockfile v1")) {
       const parsedYarnLockFile = parseYarnLockFile(lockFileString)
       if (parsedYarnLockFile.type !== "success") {
-        throw new Error("Could not parse yarn v1 lock file")
+        throw new Error(
+          `Could not parse yarn v1 lock file ${
+            isBun ? "- was originally a bun.lockb file" : ""
+          }`,
+        )
       } else {
         appLockFile = parsedYarnLockFile.object
       }
@@ -43,7 +52,11 @@ export function getPackageResolution({
         appLockFile = yaml.parse(lockFileString)
       } catch (e) {
         console.log(e)
-        throw new Error("Could not parse yarn v2 lock file")
+        throw new Error(
+          `Could not parse yarn v2 lock file ${
+            isBun ? "- was originally a bun.lockb file (should not happen)" : ""
+          }`,
+        )
       }
     }
 
@@ -93,12 +106,14 @@ export function getPackageResolution({
 
     return resolution
   } else {
-    const lockfile = require(join(
-      appPath,
-      packageManager === "npm-shrinkwrap"
-        ? "npm-shrinkwrap.json"
-        : "package-lock.json",
-    ))
+    const lockfile = require(
+      join(
+        appPath,
+        packageManager === "npm-shrinkwrap"
+          ? "npm-shrinkwrap.json"
+          : "package-lock.json",
+      ),
+    )
     const lockFileStack = [lockfile]
     for (const name of packageDetails.packageNames.slice(0, -1)) {
       const child = lockFileStack[0].dependencies
