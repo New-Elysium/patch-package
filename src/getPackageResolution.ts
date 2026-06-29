@@ -1,13 +1,17 @@
 import { join, resolve } from "./path"
 import { PackageDetails, getPatchDetailsFromCliString } from "./PackageDetails"
-import { PackageManager, detectPackageManager } from "./detectPackageManager"
+import {
+  PackageManager,
+  detectPackageManager,
+  findBunLockfilePath,
+} from "./detectPackageManager"
 import { readFileSync, existsSync } from "fs-extra"
 import { parse as parseYarnLockFile } from "@yarnpkg/lockfile"
 import yaml from "yaml"
 import findWorkspaceRoot from "find-yarn-workspace-root"
 import { getPackageVersion } from "./getPackageVersion"
 import { coerceSemVer } from "./coerceSemVer"
-import { parseBunLockfile } from "./parseBunLockfile"
+import { parseBunLockfile, parseBunLockTextFile } from "./parseBunLockfile"
 
 export function getPackageResolution({
   packageDetails,
@@ -20,43 +24,61 @@ export function getPackageResolution({
 }) {
   if (packageManager === "yarn" || packageManager === "bun") {
     const isBun = packageManager === "bun"
-    const lockFileName = isBun ? "bun.lockb" : "yarn.lock"
-    let lockFilePath = lockFileName
-    if (!existsSync(lockFilePath)) {
-      const workspaceRoot = findWorkspaceRoot()
-      if (!workspaceRoot) {
-        throw new Error(`Can't find ${lockFileName} file`)
+    let appLockFile: Record<string, any>
+
+    if (isBun) {
+      // Bun lockfile resolution. Two formats exist:
+      //   - bun.lock   : text/JSONC, Bun >= 1.2 (incl. 1.3.14) — default
+      //   - bun.lockb  : binary,     Bun < 1.2 — legacy
+      const bunLockPath = findBunLockfilePath(appPath)
+      if (!bunLockPath) {
+        throw new Error(`Can't find bun.lock or bun.lockb file`)
       }
-      lockFilePath = join(workspaceRoot, lockFilePath)
-    }
-    if (!existsSync(lockFilePath)) {
-      throw new Error(`Can't find ${lockFileName} file`)
-    }
-    const lockFileString = isBun
-      ? parseBunLockfile(lockFilePath)
-      : readFileSync(lockFilePath).toString()
-    let appLockFile
-    if (lockFileString.includes("yarn lockfile v1")) {
-      const parsedYarnLockFile = parseYarnLockFile(lockFileString)
-      if (parsedYarnLockFile.type !== "success") {
-        throw new Error(
-          `Could not parse yarn v1 lock file ${
-            isBun ? "- was originally a bun.lockb file" : ""
-          }`,
-        )
+      if (bunLockPath.endsWith("bun.lock")) {
+        // New text format. parseBunLockTextFile already returns a
+        // yarn-v1-compatible object, so we can skip the yarn lockfile parser.
+        appLockFile = parseBunLockTextFile(bunLockPath)
       } else {
+        // Legacy binary format: dump to yarn-v1 text via `bun bun.lockb`,
+        // then parse it with the yarn lockfile parser.
+        const lockFileString = parseBunLockfile(bunLockPath)
+        const parsedYarnLockFile = parseYarnLockFile(lockFileString)
+        if (parsedYarnLockFile.type !== "success") {
+          throw new Error(
+            `Could not parse yarn v1 lock file - was originally a bun.lockb file`,
+          )
+        }
         appLockFile = parsedYarnLockFile.object
       }
     } else {
-      try {
-        appLockFile = yaml.parse(lockFileString)
-      } catch (e) {
-        console.log(e)
-        throw new Error(
-          `Could not parse yarn v2 lock file ${
-            isBun ? "- was originally a bun.lockb file (should not happen)" : ""
-          }`,
-        )
+      // yarn
+      const lockFileName = "yarn.lock"
+      let lockFilePath = lockFileName
+      if (!existsSync(lockFilePath)) {
+        const workspaceRoot = findWorkspaceRoot()
+        if (!workspaceRoot) {
+          throw new Error(`Can't find ${lockFileName} file`)
+        }
+        lockFilePath = join(workspaceRoot, lockFilePath)
+      }
+      if (!existsSync(lockFilePath)) {
+        throw new Error(`Can't find ${lockFileName} file`)
+      }
+      const lockFileString = readFileSync(lockFilePath).toString()
+      if (lockFileString.includes("yarn lockfile v1")) {
+        const parsedYarnLockFile = parseYarnLockFile(lockFileString)
+        if (parsedYarnLockFile.type !== "success") {
+          throw new Error(`Could not parse yarn v1 lock file`)
+        } else {
+          appLockFile = parsedYarnLockFile.object
+        }
+      } else {
+        try {
+          appLockFile = yaml.parse(lockFileString)
+        } catch (e) {
+          console.log(e)
+          throw new Error(`Could not parse yarn v2 lock file`)
+        }
       }
     }
 

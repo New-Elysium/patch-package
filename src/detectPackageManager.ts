@@ -6,6 +6,20 @@ import findWorkspaceRoot from "find-yarn-workspace-root"
 
 export type PackageManager = "yarn" | "npm" | "npm-shrinkwrap" | "bun"
 
+/**
+ * The set of lockfile filenames patch-package recognises for each package
+ * manager. Exposed so other modules can resolve the actual file in use.
+ */
+export const LOCKFILE_NAMES = {
+  yarn: "yarn.lock",
+  npm: "package-lock.json",
+  "npm-shrinkwrap": "npm-shrinkwrap.json",
+  // bun.lockb is the legacy binary lockfile (Bun < 1.2).
+  // bun.lock is the text/JSONC lockfile used by Bun >= 1.2 (incl. 1.3.14).
+  bun: "bun.lock",
+  bunLegacy: "bun.lockb",
+} as const
+
 function printNoYarnLockfileError() {
   console.log(`
 ${chalk.red.bold("**ERROR**")} ${chalk.red(
@@ -17,7 +31,7 @@ ${chalk.red.bold("**ERROR**")} ${chalk.red(
 function printNoBunLockfileError() {
   console.log(`
 ${chalk.red.bold("**ERROR**")} ${chalk.red(
-    `The --use-bun option was specified but there is no bun.lockb file`,
+    `The --use-bun option was specified but there is no bun.lock or bun.lockb file`,
   )}
 `)
 }
@@ -25,7 +39,7 @@ ${chalk.red.bold("**ERROR**")} ${chalk.red(
 function printNoLockfilesError() {
   console.log(`
 ${chalk.red.bold("**ERROR**")} ${chalk.red(
-    `No package-lock.json, npm-shrinkwrap.json, yarn.lock, or bun.lockb file.
+    `No package-lock.json, npm-shrinkwrap.json, yarn.lock, bun.lock, or bun.lockb file.
 
 You must use either npm@>=5, yarn, npm-shrinkwrap, or bun to manage this project's
 dependencies.`,
@@ -49,7 +63,7 @@ function printSelectingDefaultYarnMessage() {
   console.info(
     `${chalk.bold(
       "patch-package",
-    )}: you have both yarn.lock and bun.lockb lockfiles
+    )}: you have both yarn.lock and a bun lockfile (bun.lock or bun.lockb)
 Defaulting to using ${chalk.bold("yarn")}
 You can override this setting by passing --use-bun, or
 deleting yarn.lock if you don't need it
@@ -85,14 +99,20 @@ export const detectPackageManager = (
     join(findWorkspaceRoot() ?? appRootPath, "yarn.lock"),
   )
   // Bun workspaces seem to work the same as yarn workspaces - https://bun.sh/docs/install/workspaces
+  // bun.lock is the text/JSONC format used by Bun >= 1.2 (incl. 1.3.14).
+  // bun.lockb is the legacy binary format used by Bun < 1.2.
+  const bunLockExists = fs.existsSync(
+    join(findWorkspaceRoot() ?? appRootPath, "bun.lock"),
+  )
   const bunLockbExists = fs.existsSync(
     join(findWorkspaceRoot() ?? appRootPath, "bun.lockb"),
   )
+  const anyBunLockExists = bunLockExists || bunLockbExists
   if (
     [
       packageLockExists || shrinkWrapExists,
       yarnLockExists,
-      bunLockbExists,
+      anyBunLockExists,
     ].filter(Boolean).length > 1
   ) {
     if (overridePackageManager) {
@@ -112,7 +132,7 @@ export const detectPackageManager = (
   } else if (yarnLockExists) {
     checkForBunOverride(overridePackageManager)
     return "yarn"
-  } else if (bunLockbExists) {
+  } else if (anyBunLockExists) {
     checkForYarnOverride(overridePackageManager)
     return "bun"
   } else {
@@ -120,4 +140,21 @@ export const detectPackageManager = (
     process.exit(1)
   }
   throw Error()
+}
+
+/**
+ * Returns the path to the actual bun lockfile that exists on disk, preferring
+ * the new `bun.lock` text format over the legacy `bun.lockb` binary format.
+ *
+ * Returns `null` if neither exists.
+ */
+export function findBunLockfilePath(appRootPath: string): string | null {
+  const root = findWorkspaceRoot() ?? appRootPath
+  if (fs.existsSync(join(root, "bun.lock"))) {
+    return join(root, "bun.lock")
+  }
+  if (fs.existsSync(join(root, "bun.lockb"))) {
+    return join(root, "bun.lockb")
+  }
+  return null
 }
