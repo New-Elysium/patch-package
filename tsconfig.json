@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "es2020",
     "module": "commonjs",
+    "moduleResolution": "bundler",
     "lib": ["es2020"],
     "strict": true,
     "esModuleInterop": true,
@@ -12,11 +13,9 @@
     "noEmitOnError": false,
     "inlineSources": true,
     "skipLibCheck": true,
-    "moduleResolution": "node",
     "types": ["jest", "node"],
   },
   "include": [
-    "typings/**/*.d.ts",
     "src/**/*.ts",
     "property-based-tests/**/*",
     "integration-tests/**/*",

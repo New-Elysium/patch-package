@@ -59,7 +59,7 @@ export function savePatchApplicationState({
     isRebasing,
   }
 
-  writeFileSync(fileName, stringify(state, { space: 4 }), "utf8")
+  writeFileSync(fileName, stringify(state, { space: 4 }) as string, "utf8")
 }
 
 export function clearPatchApplicationState(packageDetails: PackageDetails) {
